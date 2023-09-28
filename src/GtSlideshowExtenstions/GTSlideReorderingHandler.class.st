@@ -7,6 +7,7 @@ Class {
 { #category : #'event handling' }
 GTSlideReorderingHandler >> dragEndEvent: anEvent [
 	"anEvent consumed: true."
+
 	| draggable |
 	draggable := anEvent currentTarget.
 	overlay removeChild: draggable.
@@ -14,7 +15,7 @@ GTSlideReorderingHandler >> dragEndEvent: anEvent [
 	overlay detach.
 
 	anEvent currentTarget dispatchEvent: BlPullEndEvent new.
-	parent dispatchEvent: BlChildOrderingPotentiallyChangedEvent new
+	parent dispatchEvent: (BlChildOrderingPotentiallyChangedEvent parent: parent)
 ]
 
 { #category : #initialization }
@@ -30,20 +31,22 @@ GTSlideReorderingHandler >> inplaceSorting [
 	<gtExample>
 	| pane |
 	pane := BlElement new
-		size: 700 @ 600;
-		layout: BlFlowLayout new;
-		border: (BlBorder paint: Color black);
-		padding: (BlInsets all: 5)
-		yourself.
-	10 timesRepeat: [ |element|
-	element := BlElement new
-		size: 150 @ 100;
-		border: (BlBorder paint: Color black);
-		background: Color random;
-		margin: (BlInsets all: 5);
-		addEventHandler: DTReorderingHandler new;
-		yourself.
-	pane addChild: element].
-	pane when: BlChildOrderingPotentiallyChangedEvent do: [ :anEvent | self inform: 'Ordering may have changed' ].
-^pane
+			size: 700 @ 600;
+			layout: BlFlowLayout new;
+			border: (BlBorder paint: Color black);
+			padding: (BlInsets all: 5) yourself.
+	10
+		timesRepeat: [ | element |
+			element := BlElement new
+					size: 150 @ 100;
+					border: (BlBorder paint: Color black);
+					background: Color random;
+					margin: (BlInsets all: 5);
+					addEventHandler: DTReorderingHandler new;
+					yourself.
+			pane addChild: element ].
+	pane
+		when: BlChildOrderingPotentiallyChangedEvent
+		do: [ :anEvent | self inform: anEvent parent asString ].
+	^ pane
 ]
