@@ -25,7 +25,8 @@ PrioritySlideshow class >> getSlideSelectors [
 PrioritySlideshow class >> gtReorderSlidesFor: aView [
 	<gtClassView>
 	| lastStatement |
-	lastStatement := (self >> #slidePriorities) ast statements last.
+	lastStatement := (self allMethods
+			detect: [ :each | each selector = #slidePriorities ]) ast statements last.
 	self
 		flag: 'TODO: Better logic for when to hide vs show? Don''t show if no slides are in method or hard to parse.'.
 	(lastStatement isReturn
