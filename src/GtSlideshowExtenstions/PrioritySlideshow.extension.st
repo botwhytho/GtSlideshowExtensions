@@ -11,8 +11,7 @@ PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowIns
 		aptitude: BrShadowAptitude new;
 		margin: (BlInsets all: 6);
 		background: Color white;
-		slideViewModel: (GtPresenterSlideViewModel new slide: slide);
-		addEventHandler: GTSlideReorderingHandler new
+		slideViewModel: (GtPresenterSlideViewModel new slide: slide)
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -135,13 +134,14 @@ PrioritySlideshow class >> gtReorderSlidesFor: aView [
 			slides
 				do: [ :aSlideMethod | 
 					| element |
-					element := self
+					element := (self
 							generatePreviewElement: aSlideMethod
-							withSlideshowInstance: slideshow.
+							withSlideshowInstance: slideshow)
+							addEventHandler: GTSlideReorderingHandler new.
 					container addChild: element ].
 			container
 				when: BlChildOrderingPotentiallyChangedEvent
-				do: [ :anEvent | self recompileMethodIfOrderChanged: anEvent ].
+				do: [ :anEvent | self recompileMethodIfOrderChanged: container ].
 			container asScrollableElement ]
 ]
 
@@ -163,10 +163,10 @@ PrioritySlideshow class >> recompileMethod: guiOrder [
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
-PrioritySlideshow class >> recompileMethodIfOrderChanged: anEvent [
+PrioritySlideshow class >> recompileMethodIfOrderChanged: aBlElementCollection [
 	| currentOrder guiOrder |
 	currentOrder := self getSlideSelectors.
-	guiOrder := anEvent parent children collect: [ :each | each id identifier ].
+	guiOrder := aBlElementCollection children collect: [ :each | each id identifier ].
 	currentOrder asArray = guiOrder asArray
 		ifFalse: [ self recompileMethod: guiOrder ]
 ]
