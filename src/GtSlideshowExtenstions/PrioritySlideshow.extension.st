@@ -16,10 +16,17 @@ PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowIns
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
-PrioritySlideshow class >> getCreateSlidesFor: aView [
+PrioritySlideshow class >> getSlideSelectors [
+	^ (self >> #slidePriorities) ast statements last children first contents
+		collect: #value
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> gtCreateSlidesFor: aView [
 	"true = false ifFalse: [ ^ aView empty ]."
 
 	<gtClassView>
+	self  = PrioritySlideshow ifTrue: [ ^ aView empty ].
 	self methods
 		detect: [ :aMethod | aMethod selector = #slidePriorities ]
 		ifNone: [ | emptyMethod |
@@ -101,12 +108,6 @@ PrioritySlideshow class >> getCreateSlidesFor: aView [
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
-PrioritySlideshow class >> getSlideSelectors [
-	^ (self >> #slidePriorities) ast statements last children first contents
-		collect: #value
-]
-
-{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> gtReorderSlidesFor: aView [
 	<gtClassView>
 	| lastStatement |
@@ -145,6 +146,14 @@ PrioritySlideshow class >> gtReorderSlidesFor: aView [
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> gtSpotterActDefaultFrom: aSpotterElement [
+	^ (GtPager
+		openWrappedOn: self slideCompositeTool asElement
+		title: self printString
+		from: aSpotterElement) maximized
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> recompileMethod: guiOrder [
 	| method |
 	method := self >> #slidePriorities.
@@ -160,4 +169,17 @@ PrioritySlideshow class >> recompileMethodIfOrderChanged: anEvent [
 	guiOrder := anEvent parent children collect: [ :each | each id identifier ].
 	currentOrder asArray = guiOrder asArray
 		ifFalse: [ self recompileMethod: guiOrder ]
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> slideCompositeTool [
+	^ GtPhlowCompositeTool new
+		addTool: (GtPhlowValuableTool new
+				name: 'Slide Editor';
+				valuable: (MessageSend
+						receiver: self
+						selector: #gtCreateSlidesFor:
+						argument: GtPhlowProtoView new));
+		addTool: (GtClassCoderTool new observedClass: self);
+		yourself
 ]
