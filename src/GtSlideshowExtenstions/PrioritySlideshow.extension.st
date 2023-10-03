@@ -1,6 +1,18 @@
 Extension { #name : #PrioritySlideshow }
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> compileStarterMethods [
+	self methods
+		detect: [ :aMethod | aMethod selector = #slidePriorities ]
+		ifNone: [ | emptyMethod |
+			emptyMethod := (PrioritySlideshow >> #slidePriorities) ast.
+			self compile: (DemoSlideshow >> #titleSlideFor:) ast formattedCode.
+			emptyMethod statements last children first
+				contents: {RBLiteralValueNode value: #titleSlideFor:}.
+			self compile: emptyMethod formattedCode ]
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> createNewSlideFromTemplate [
 	self flag: 'TODO: Currently Static. Refactor into bringing up menu with templates, empty or clone current'.
 	^ DemoSlideshow >> #titleSlideFor:
@@ -21,6 +33,11 @@ PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowIns
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> generateSlide: aSelector fromSlideshow: aSlideshow [
+	^ (aSlideshow perform: aSelector with: GtLiveSlide new) asElement
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> getSlideSelectors [
 	^ (self >> #slidePriorities) ast statements last children first contents
 		collect: #value
@@ -32,48 +49,21 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 
 	<gtClassView>
 	self = PrioritySlideshow ifTrue: [ ^ aView empty ].
-	self methods
-		detect: [ :aMethod | aMethod selector = #slidePriorities ]
-		ifNone: [ | emptyMethod |
-			emptyMethod := (PrioritySlideshow >> #slidePriorities) ast.
-			self compile: (DemoSlideshow >> #titleSlideFor:) ast formattedCode.
-			emptyMethod statements last children first
-				contents: {RBLiteralValueNode value: #titleSlideFor:}.
-			self compile: emptyMethod formattedCode ].
+	self compileStarterMethods.
 	^ aView explicit
 		title: 'Create Slides';
 		tooltip: 'Create, modify & reorder slides.';
 		priority: 0;
-		stencil: [ | aSlideshow coderElement element pane renderSlide sidebar slideTemplate slides |
-			coderElement := [ :aMethod | 
-				| aModel aViewModel anElement |
-				aModel := GtPharoMethodCoder forMethod: aMethod.
-				aViewModel := aModel asCoderViewModel.
-				anElement := GtExpandableMethodCoderElement new
-						coderViewModel: aViewModel;
-						collapse.
-				aModel
-					when: GtCoderMethodModified
-					do: [ anElement fireEvent: BlSlideDefinitionChanged new ].
-				anElement
-					background: Color white;
-					margin: (BlInsets
-							top: 3
-							right: 10
-							bottom: 10
-							left: 10);
-					addAptitude: BrShadowAptitude new + BrGlamorousWithVerticalResizerAptitude new beBottom.
-				anElement ].
-			slideTemplate := [ :aSlideshow2 :aSelector | (aSlideshow2 perform: aSelector with: GtLiveSlide new) asElement ].
+		stencil: [ | aSlideshow element pane renderSlide sidebar slides |
 			aSlideshow := self new.
-			renderSlide := [ slideTemplate value: aSlideshow value: #titleSlideFor: ].
 			element := BrVerticalPane new.
 			element
 				constraintsDo: [ :c | 
 					c vertical matchParent.
 					c horizontal matchParent ];
-				addChild: renderSlide value;
-				addChild: (coderElement value: self >> #titleSlideFor:);
+				flag: 'TODO: Start with focus dynamically calculated with slide in first postion of array in `slidePriorities` method.';
+				addChild: (self generateSlide: #titleSlideFor: fromSlideshow: aSlideshow);
+				addChild: (self slideCoderElement: self >> #titleSlideFor:);
 				when: BlSlideDefinitionChanged
 					do: [ :anEvent | 
 						anEvent consumed: true.
@@ -189,6 +179,28 @@ PrioritySlideshow class >> recompileMethodIfOrderChanged: aBlElementCollection [
 	guiOrder := aBlElementCollection collect: [ :each | each id identifier ].
 	currentOrder asArray = guiOrder asArray
 		ifFalse: [ self recompileMethod: guiOrder ]
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> slideCoderElement: aMethod [
+	| aModel aViewModel anElement |
+	aModel := GtPharoMethodCoder forMethod: aMethod.
+	aViewModel := aModel asCoderViewModel.
+	anElement := GtExpandableMethodCoderElement new
+			coderViewModel: aViewModel;
+			collapse.
+	aModel
+		when: GtCoderMethodModified
+		do: [ anElement fireEvent: BlSlideDefinitionChanged new ].
+	anElement
+		background: Color white;
+		margin: (BlInsets
+				top: 3
+				right: 10
+				bottom: 10
+				left: 10);
+		addAptitude: BrShadowAptitude new + BrGlamorousWithVerticalResizerAptitude new beBottom.
+	^ anElement
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
