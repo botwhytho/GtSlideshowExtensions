@@ -67,7 +67,9 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 				when: BlSlideDefinitionChanged
 					do: [ :anEvent | 
 						anEvent consumed: true.
-						element replaceChild: (element childAt: 1) with: renderSlide value ].
+						element
+							replaceChild: (element childAt: 1)
+							with: (self generateSlide: anEvent viewModel selector fromSlideshow: aSlideshow) ].
 			element.
 			pane := BrHorizontalPane new
 					constraintsDo: [ :c | 
@@ -191,7 +193,7 @@ PrioritySlideshow class >> slideCoderElement: aMethod [
 			collapse.
 	aModel
 		when: GtCoderMethodModified
-		do: [ anElement fireEvent: BlSlideDefinitionChanged new ].
+		do: [ anElement fireEvent: (BlSlideDefinitionChanged new viewModel: aViewModel) ].
 	anElement
 		background: Color white;
 		margin: (BlInsets
