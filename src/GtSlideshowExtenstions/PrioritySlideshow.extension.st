@@ -228,13 +228,9 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 					label: 'Add slide above';
 					action: [ :aBrButton :aBrButtonModel :anEvent | 
 						aBrButton parent parent parent
-							addChild: (BrHorizontalPane new
-									fitContent;
-									alignCenter;
-									addChildren: {PrioritySlideshow
-												generatePreviewElement: self createNewSlideFromTemplate
-												withSlideshowInstance: aSlideshow.
-											self slideControlElements: aSlideshow})
+							addChild: (self
+									slidePreviewAndControlsElement: self createNewSlideFromTemplate
+									withSlideshow: aSlideshow)
 							before: aBrButton parent parent.
 						aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ].
 				BrGlamorousVectorIcons add asElement background: Color lightGray.
@@ -245,13 +241,9 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 					label: 'Add slide below';
 					action: [ :aBrButton :aBrButtonModel :anEvent | 
 						aBrButton parent parent parent
-							addChild: (BrHorizontalPane new
-									fitContent;
-									alignCenter;
-									addChildren: {PrioritySlideshow
-												generatePreviewElement: self createNewSlideFromTemplate
-												withSlideshowInstance: aSlideshow.
-											self slideControlElements: aSlideshow})
+							addChild: (self
+									slidePreviewAndControlsElement: self createNewSlideFromTemplate
+									withSlideshow: aSlideshow)
 							after: aBrButton parent parent.
 						aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]}
 ]
