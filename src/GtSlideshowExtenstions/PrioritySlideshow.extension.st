@@ -1,6 +1,12 @@
 Extension { #name : #PrioritySlideshow }
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> createNewSlideFromTemplate [
+	self flag: 'TODO: Currently Static. Refactor into bringing up menu with templates, empty or clone current'.
+	^ DemoSlideshow >> #titleSlideFor:
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowInstance: aSlideshow [
 	| slide |
 	slide := GtPresenterSlide new
@@ -106,9 +112,9 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 								background: Color white;
 								fitContent;
 								alignCenter;
-								addChildren: {anElement".
-							addSlide value"};
-								addEventHandler: GTSlideReorderingHandler new)].
+								addChildren: {anElement.
+										self slideControlElements: aSlideshow};
+								addEventHandler: GTSlideReorderingHandler new) ].
 			pane
 				addChild: (sidebar asScrollableElement
 						constraintsDo: [ :c | 
@@ -196,4 +202,44 @@ PrioritySlideshow class >> slideCompositeTool [
 						argument: GtPhlowProtoView new));
 		addTool: (GtClassCoderTool new observedClass: self);
 		yourself
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> slideControlElements: aSlideshow [
+	^ BrVerticalPane new
+		constraintsDo: [ :c | 
+			c horizontal fitContent.
+			c vertical fitContent ];
+		alignCenter;
+		addChildren: {BrButton new
+					beSmallSize;
+					aptitude: BrGlamorousButtonWithIconAptitude;
+					icon: (BrGlamorousVectorIcons upwards asElement background: Color lightGray);
+					label: 'Add slide above';
+					action: [ :aBrButton :aBrButtonModel :anEvent | 
+						aBrButton parent parent parent
+							addChild: (BrHorizontalPane new
+									fitContent;
+									alignCenter;
+									addChildren: {PrioritySlideshow
+												generatePreviewElement: self createNewSlideFromTemplate
+												withSlideshowInstance: aSlideshow.
+											self slideControlElements: aSlideshow})
+							before: aBrButton parent parent ].
+				BrGlamorousVectorIcons add asElement background: Color lightGray.
+				BrButton new
+					beSmallSize;
+					aptitude: BrGlamorousButtonWithIconAptitude;
+					icon: (BrGlamorousVectorIcons downwards asElement background: Color lightGray);
+					label: 'Add slide below';
+					action: [ :aBrButton :aBrButtonModel :anEvent | 
+						aBrButton parent parent parent
+							addChild: (BrHorizontalPane new
+									fitContent;
+									alignCenter;
+									addChildren: {PrioritySlideshow
+												generatePreviewElement: self createNewSlideFromTemplate
+												withSlideshowInstance: aSlideshow.
+											self slideControlElements: aSlideshow})
+							after: aBrButton parent parent ]}
 ]
