@@ -20,16 +20,22 @@ PrioritySlideshow class >> createNewSlideFromTemplate [
 
 { #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowInstance: aSlideshow [
-	| slide |
+	| element slide |
 	slide := GtPresenterSlide new
 			stencil: (aSlideshow perform: aSlideMethod selector with: GtLiveSlide new).
-	^ GtPresenterSlidePreviewElement new
+	element := GtPresenterSlidePreviewElement new.
+	element
 		id: aSlideMethod selector;
 		exact: 384 @ 216;
 		aptitude: BrShadowAptitude new;
 		margin: (BlInsets all: 6);
 		background: Color white;
-		slideViewModel: (GtPresenterSlideViewModel new slide: slide)
+		slideViewModel: (GtPresenterSlideViewModel new slide: slide);
+		when: BlClickEvent
+			do: [ :anEvent | 
+				anEvent consumed: true.
+				self inform: element id identifier ].
+	^ element
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -65,8 +71,6 @@ PrioritySlideshow class >> getSlideSelectors [
 
 { #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> gtCreateSlidesFor: aView [
-	"true = false ifFalse: [ ^ aView empty ]."
-
 	<gtClassView>
 	self = PrioritySlideshow ifTrue: [ ^ aView empty ].
 	self compileStarterMethods.
