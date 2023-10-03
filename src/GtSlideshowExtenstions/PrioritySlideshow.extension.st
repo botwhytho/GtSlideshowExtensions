@@ -25,7 +25,7 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 	"true = false ifFalse: [ ^ aView empty ]."
 
 	<gtClassView>
-	self  = PrioritySlideshow ifTrue: [ ^ aView empty ].
+	self = PrioritySlideshow ifTrue: [ ^ aView empty ].
 	self methods
 		detect: [ :aMethod | aMethod selector = #slidePriorities ]
 		ifNone: [ | emptyMethod |
@@ -88,7 +88,12 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 					fitContent.
 			sidebar
 				when: BlChildOrderingPotentiallyChangedEvent
-				do: [ :anEvent | self recompileMethodIfOrderChanged: anEvent ].
+				do: [ :anEvent | 
+					| slideCollection |
+					anEvent consumed: true.
+					slideCollection := sidebar children
+							collect: [ :each | each children first ].
+					self recompileMethodIfOrderChanged: slideCollection ].
 			slides := self getSlideSelectors collect: [ :each | self >> each ].
 			slides
 				do: [ :aSlideMethod | 
@@ -96,7 +101,14 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 					anElement := self
 							generatePreviewElement: aSlideMethod
 							withSlideshowInstance: aSlideshow.
-					sidebar addChild: anElement ].
+					sidebar
+						addChild: (BrHorizontalPane new
+								background: Color white;
+								fitContent;
+								alignCenter;
+								addChildren: {anElement".
+							addSlide value"};
+								addEventHandler: GTSlideReorderingHandler new)].
 			pane
 				addChild: (sidebar asScrollableElement
 						constraintsDo: [ :c | 
@@ -141,7 +153,9 @@ PrioritySlideshow class >> gtReorderSlidesFor: aView [
 					container addChild: element ].
 			container
 				when: BlChildOrderingPotentiallyChangedEvent
-				do: [ :anEvent | self recompileMethodIfOrderChanged: container ].
+				do: [ :anEvent | 
+					anEvent consumed: true.
+					self recompileMethodIfOrderChanged: container children ].
 			container asScrollableElement ]
 ]
 
@@ -166,7 +180,7 @@ PrioritySlideshow class >> recompileMethod: guiOrder [
 PrioritySlideshow class >> recompileMethodIfOrderChanged: aBlElementCollection [
 	| currentOrder guiOrder |
 	currentOrder := self getSlideSelectors.
-	guiOrder := aBlElementCollection children collect: [ :each | each id identifier ].
+	guiOrder := aBlElementCollection collect: [ :each | each id identifier ].
 	currentOrder asArray = guiOrder asArray
 		ifFalse: [ self recompileMethod: guiOrder ]
 ]
