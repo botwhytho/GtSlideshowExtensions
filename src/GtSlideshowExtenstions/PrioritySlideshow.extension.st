@@ -100,18 +100,8 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 			slides := self getSlideSelectors collect: [ :each | self >> each ].
 			slides
 				do: [ :aSlideMethod | 
-					| anElement |
-					anElement := self
-							generatePreviewElement: aSlideMethod
-							withSlideshowInstance: aSlideshow.
 					sidebar
-						addChild: (BrHorizontalPane new
-								background: Color white;
-								fitContent;
-								alignCenter;
-								addChildren: {anElement.
-										self slideControlElements: aSlideshow};
-								addEventHandler: GTSlideReorderingHandler new) ].
+						addChild: (self slidePreviewAndControlsElement: aSlideMethod withSlideshow: aSlideshow) ].
 			pane
 				addChild: (sidebar asScrollableElement
 						constraintsDo: [ :c | 
@@ -264,4 +254,15 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 											self slideControlElements: aSlideshow})
 							after: aBrButton parent parent.
 						aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]}
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> slidePreviewAndControlsElement: aSlideMethod withSlideshow: aSlideshow [
+	^ BrHorizontalPane new
+		background: Color white;
+		fitContent;
+		alignCenter;
+		addChildren: {self generatePreviewElement: aSlideMethod withSlideshowInstance: aSlideshow.
+				self slideControlElements: aSlideshow};
+		addEventHandler: GTSlideReorderingHandler new
 ]
