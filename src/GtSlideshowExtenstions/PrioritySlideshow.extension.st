@@ -239,7 +239,8 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 												generatePreviewElement: self createNewSlideFromTemplate
 												withSlideshowInstance: aSlideshow.
 											self slideControlElements: aSlideshow})
-							before: aBrButton parent parent ].
+							before: aBrButton parent parent.
+						aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ].
 				BrGlamorousVectorIcons add asElement background: Color lightGray.
 				BrButton new
 					beSmallSize;
@@ -255,5 +256,6 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 												generatePreviewElement: self createNewSlideFromTemplate
 												withSlideshowInstance: aSlideshow.
 											self slideControlElements: aSlideshow})
-							after: aBrButton parent parent ]}
+							after: aBrButton parent parent.
+						aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]}
 ]
