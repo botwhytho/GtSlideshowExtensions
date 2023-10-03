@@ -38,6 +38,26 @@ PrioritySlideshow class >> generateSlide: aSelector fromSlideshow: aSlideshow [
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlideshow [
+	| element |
+	element := BrVerticalPane new.
+	element
+		constraintsDo: [ :c | 
+			c vertical matchParent.
+			c horizontal matchParent ];
+		flag: 'TODO: Start with focus dynamically calculated with slide in first postion of array in `slidePriorities` method.';
+		addChild: (self generateSlide: aSelector fromSlideshow: aSlideshow);
+		addChild: (self slideCoderElement: self >> aSelector);
+		when: BlSlideDefinitionChanged
+			do: [ :anEvent | 
+				anEvent consumed: true.
+				element
+					replaceChild: (element childAt: 1)
+					with: (self generateSlide: aSelector fromSlideshow: aSlideshow) ].
+	^ element
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> getSlideSelectors [
 	^ (self >> #slidePriorities) ast statements last children first contents
 		collect: #value
@@ -54,23 +74,8 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 		title: 'Create Slides';
 		tooltip: 'Create, modify & reorder slides.';
 		priority: 0;
-		stencil: [ | aSlideshow element pane renderSlide sidebar slides |
+		stencil: [ | aSlideshow pane sidebar slides |
 			aSlideshow := self new.
-			element := BrVerticalPane new.
-			element
-				constraintsDo: [ :c | 
-					c vertical matchParent.
-					c horizontal matchParent ];
-				flag: 'TODO: Start with focus dynamically calculated with slide in first postion of array in `slidePriorities` method.';
-				addChild: (self generateSlide: #titleSlideFor: fromSlideshow: aSlideshow);
-				addChild: (self slideCoderElement: self >> #titleSlideFor:);
-				when: BlSlideDefinitionChanged
-					do: [ :anEvent | 
-						anEvent consumed: true.
-						element
-							replaceChild: (element childAt: 1)
-							with: (self generateSlide: anEvent viewModel selector fromSlideshow: aSlideshow) ].
-			element.
 			pane := BrHorizontalPane new
 					constraintsDo: [ :c | 
 						c vertical matchParent.
@@ -112,7 +117,8 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 						constraintsDo: [ :c | 
 							c horizontal fitContent.
 							c vertical matchParent ]).
-			pane addChild: element.
+			pane
+				addChild: (self generateSlideAndCoder: #titleSlideFor: fromSlideshow: aSlideshow).
 			pane ]
 ]
 
