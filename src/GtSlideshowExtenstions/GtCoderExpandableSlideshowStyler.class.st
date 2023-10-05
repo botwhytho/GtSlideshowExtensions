@@ -30,16 +30,16 @@ GtCoderExpandableSlideshowStyler >> isNonEmptyLiteralStringNode: nameNode [
 ]
 
 { #category : #visiting }
-GtCoderExpandableSlideshowStyler >> styleSlideMethods: aStringLiteralNode [
+GtCoderExpandableSlideshowStyler >> styleSlideMethods: aSymbolLiteralNode [
 	| anExpanderAttribute |
 	self
 		attribute: (GtCompletionStrategyAttribute new
 				strategy: (GtSlideshowCompletionStrategy withSlideshowClass: self coderViewModel behavior))
-		from: aStringLiteralNode value startPosition
-		to: aStringLiteralNode value stopPosition.
+		from: aSymbolLiteralNode value startPosition
+		to: aSymbolLiteralNode value stopPosition.
 
 	self coderViewModel behavior methods
-		detect: [ :each | each selector = aStringLiteralNode asSymbol ]
+		detect: [ :each | each selector = aSymbolLiteralNode value ]
 		ifFound: [ :found | 
 			anExpanderAttribute := BrGlamorousTriangleExpanderTextAttribute new
 					id: GtSourceCoderEmbeddedExpanderToggleId;
@@ -62,14 +62,14 @@ GtCoderExpandableSlideshowStyler >> styleSlideMethods: aStringLiteralNode [
 					label: 'Slide hasn''t been created';
 					description: [ 'Please create the slide from one of the templates below' ];
 					placeholderAlignment: #alignMiddle;
-					fixItActions: (self calculateTemplates: aStringLiteralNode);
+					fixItActions: (self calculateTemplates: aSymbolLiteralNode);
 					yourself ].
 
 
 	self
 		attribute: anExpanderAttribute
-		from: aStringLiteralNode value stopPosition
-		to: aStringLiteralNode value stopPosition
+		from: aSymbolLiteralNode value stopPosition
+		to: aSymbolLiteralNode value stopPosition
 ]
 
 { #category : #visiting }

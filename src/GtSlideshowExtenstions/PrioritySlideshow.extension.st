@@ -89,6 +89,8 @@ PrioritySlideshow class >> getSlideSelectors [
 PrioritySlideshow class >> gtCreateSlidesFor: aView [
 	<gtClassView>
 	self = PrioritySlideshow ifTrue: [ ^ aView empty ].
+	self
+		flag: 'TODO: the below is probably not necessary. Added when I saw issues with method compilation, but then realized some refactorings weren''t really running because they would fail if overriding a super method so switched back to `self compile: aMethodSourceCode`.'.
 	(MessageSend receiver: self selector: #compileStarterMethods) asAsyncFuture
 		await.
 	^ aView explicit
