@@ -1,6 +1,43 @@
 Extension { #name : #PrioritySlideshow }
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> addSlideAbove: aSlideshow [
+	| aButton anIcon |
+	anIcon := [ BrGlamorousVectorIcons upwards asElement
+			background: Color lightGray ].
+	aButton := BrButton new id: #addAbove.
+	^ aButton
+		beSmallSize;
+		aptitude: BrGlamorousButtonWithIconAptitude
+				+ (self slideTemplateDropdownAptitude: anIcon value);
+		icon: anIcon value;
+		label: 'Add slide above'	";
+		action: [ :aBrButton :aBrButtonModel :anEvent | 
+			aBrButton parent parent parent
+				addChild: (self
+						slidePreviewAndControlsElement: self createNewSlideFromTemplate
+						withSlideshow: aSlideshow)
+				before: aBrButton parent parent.
+			aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]"
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> addSlideBelow: aSlideshow [
+	^ BrButton new
+		beSmallSize;
+		aptitude: BrGlamorousButtonWithIconAptitude;
+		icon: (BrGlamorousVectorIcons downwards asElement background: Color lightGray);
+		label: 'Add slide below';
+		action: [ :aBrButton :aBrButtonModel :anEvent | 
+			aBrButton parent parent parent
+				addChild: (self
+						slidePreviewAndControlsElement: self createNewSlideFromTemplate
+						withSlideshow: aSlideshow)
+				after: aBrButton parent parent.
+			aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> compileStarterMethods [
 	self methods
 		detect: [ :aMethod | aMethod selector = #slidePriorities ]
@@ -18,6 +55,16 @@ PrioritySlideshow class >> compileStarterMethods [
 PrioritySlideshow class >> createNewSlideFromTemplate [
 	self flag: 'TODO: Currently Static. Refactor into bringing up menu with templates, empty or clone current'.
 	^ DemoSlideshow >> #titleSlideFor:
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> defaultFixItActions [
+	^ GtCreateSlideFixItAction defaultSlideTemplates
+		collect: [ :each | 
+			(GtCreateSlideFixItAction
+				inClass: self
+				withName: each selector
+				withTemplate: each) node: (RBLiteralNode value: each selector) ]
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -248,31 +295,9 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 			c horizontal fitContent.
 			c vertical fitContent ];
 		alignCenter;
-		addChildren: {BrButton new
-					beSmallSize;
-					aptitude: BrGlamorousButtonWithIconAptitude;
-					icon: (BrGlamorousVectorIcons upwards asElement background: Color lightGray);
-					label: 'Add slide above';
-					action: [ :aBrButton :aBrButtonModel :anEvent | 
-						aBrButton parent parent parent
-							addChild: (self
-									slidePreviewAndControlsElement: self createNewSlideFromTemplate
-									withSlideshow: aSlideshow)
-							before: aBrButton parent parent.
-						aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ].
+		addChildren: {self addSlideAbove: aSlideshow.
 				BrGlamorousVectorIcons add asElement background: Color lightGray.
-				BrButton new
-					beSmallSize;
-					aptitude: BrGlamorousButtonWithIconAptitude;
-					icon: (BrGlamorousVectorIcons downwards asElement background: Color lightGray);
-					label: 'Add slide below';
-					action: [ :aBrButton :aBrButtonModel :anEvent | 
-						aBrButton parent parent parent
-							addChild: (self
-									slidePreviewAndControlsElement: self createNewSlideFromTemplate
-									withSlideshow: aSlideshow)
-							after: aBrButton parent parent.
-						aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]}
+				self addSlideBelow: aSlideshow}
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -294,4 +319,62 @@ PrioritySlideshow class >> slidePreviewAndControlsElement: aSlideMethod withSlid
 				self generatePreviewElement: aSlideMethod withSlideshowInstance: aSlideshow.
 				self slideControlElements: aSlideshow};
 		addEventHandler: GTSlideReorderingHandler new
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> slideTemplateDropdownAptitude: anIcon [
+	| aValuable |
+	aValuable := [ | actions addSlide cancelButton controls miscElement pane selectorName selectorMenu simpleList |
+		actions := self defaultFixItActions.
+		pane := BrHorizontalPane new matchParent.
+		selectorName := BrEditableLabel new
+				aptitude: BrGlamorousEditableLabelAptitude new glamorousRegularFontAndSize.
+
+		simpleList := BrSimpleList new
+				fitContent;
+				itemStencil: [ BrLabel new
+						aptitude: BrGlamorousListLabelAptitude + BrGlamorousListItemAptitude;
+						padding: (BlInsets all: 5) ];
+				itemDataBinder: [ :eachElement :aFixItAction :anIndex | 
+					eachElement
+						when: BlClickEvent
+						do: [ selectorName text: (BlRunRopedText string: aFixItAction slideName).
+							pane userData at: #selectedTemplate put: anIndex ].
+					eachElement text: aFixItAction description ];
+				items: actions.
+
+
+		controls := BrHorizontalPane new matchParent.
+		miscElement := BlElement new.
+		addSlide := BrButton new
+				aptitude: BrGlamorousButtonWithLabelAptitude new;
+				label: 'Create Slide';
+				margin: (BlInsets all: 2)";
+				action: [ :aButton | 
+					(actions at: (pane userData at: #selectedTemplate)) executeOn: miscElement.
+					aButton fireEvent: BrDropdownHideWish new ]".
+		cancelButton := BrButton new
+				aptitude: BrGlamorousButtonWithIconAptitude new;
+				icon: BrGlamorousVectorIcons cancel;
+				margin: (BlInsets all: 2);
+				action: [ :aButton | aButton fireEvent: BrDropdownHideWish new ].
+		selectorMenu := BrVerticalPane new
+				alignCenter;
+				matchParent;
+				addChildren: {selectorName.
+						BrHorizontalPane new
+							fitContent;
+							alignCenter;
+							addChildren: {addSlide.
+									cancelButton}}.
+		pane
+			addChildren: {simpleList.
+					selectorMenu} ].
+	^ BrGlamorousWithDropdownAptitude
+		handle: [ BrButton new
+				beSmallSize;
+				aptitude: BrGlamorousButtonWithIconAptitude;
+				icon: anIcon;
+				label: 'Add slide above' ]
+		content: [ aValuable value ]
 ]
