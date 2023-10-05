@@ -70,8 +70,8 @@ PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlid
 					replaceChild: (aPreviewElement parent
 							childAt: (aPreviewElement parent children indexOf: aPreviewElement))
 					with: (self
-							generatePreviewElement: self >> aSelector
-							withSlideshowInstance: aSlideshow) ].
+							slidePreviewAndControlsElement: self >> aSelector
+							withSlideshow: aSlideshow) ].
 	^ element
 ]
 
