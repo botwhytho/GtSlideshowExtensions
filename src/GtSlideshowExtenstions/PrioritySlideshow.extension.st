@@ -254,11 +254,21 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 
 { #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> slidePreviewAndControlsElement: aSlideMethod withSlideshow: aSlideshow [
-	^ BrHorizontalPane new
+	| anElement aLabel |
+	anElement := BrHorizontalPane new.
+	aLabel := BrLabel new.
+	aLabel
+		aptitude: BrGlamorousLabelAptitude new glamorousRegularFontAndSize;
+		alignCenter;
+		enqueueTask: (BlDelayedTaskAction new
+				delay: 0 milliSeconds;
+				action: [ aLabel text: (anElement parent childIndexOf: anElement) ]).
+	^ anElement
 		background: Color white;
 		fitContent;
 		alignCenter;
-		addChildren: {self generatePreviewElement: aSlideMethod withSlideshowInstance: aSlideshow.
+		addChildren: {aLabel.
+				self generatePreviewElement: aSlideMethod withSlideshowInstance: aSlideshow.
 				self slideControlElements: aSlideshow};
 		addEventHandler: GTSlideReorderingHandler new
 ]
