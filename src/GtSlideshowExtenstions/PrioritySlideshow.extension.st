@@ -99,7 +99,9 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 					| slideCollection |
 					anEvent consumed: true.
 					slideCollection := sidebar children
-							collect: [ :each | each children first ].
+							collect: [ :each | 
+								each children first text: (each parent childIndexOf: each).
+								each children second ].
 					self recompileMethodIfOrderChanged: slideCollection ].
 			slides := self getSlideSelectors collect: [ :each | self >> each ].
 			slides
