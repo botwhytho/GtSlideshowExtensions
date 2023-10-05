@@ -18,7 +18,7 @@ GtCoderExpandableSlideshowStyler >> createSlideFromTemplates: aStringLiteralNode
 		collect: [ :each | 
 			(GtCreateSlideFixItAction
 				inClass: self coderViewModel behavior
-				withName: aStringLiteralNode value value
+				withName: aStringLiteralNode value value asSymbol
 				withTemplate: each) node: aStringLiteralNode ]
 ]
 

@@ -57,7 +57,10 @@ GtCreateSlideFixItAction >> description [
 GtCreateSlideFixItAction >> executeOn: anEditorElement [
 	self compileMethod.
 	(anEditorElement respondsTo: #editor)
-		ifTrue: [ slideName isKeyword ifFalse: [ self haltOnce ].
+		ifTrue: [ slideName isKeyword
+				ifFalse: [ anEditorElement editor text
+						insertText: (BlRunRopedText string: ':')
+						at: anEditorElement editor cursors cursors first position ].
 			self clearFixItAttributeInEditor: anEditorElement editor.
 			anEditorElement dataSource model requestSave ]
 ]
