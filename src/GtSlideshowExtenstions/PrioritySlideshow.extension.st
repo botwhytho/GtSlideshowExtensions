@@ -34,6 +34,7 @@ PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowIns
 		when: BlClickEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.
+				self flag: 'TODO: load slide and method on click.'.
 				self inform: element id identifier ].
 	^ element
 ]
@@ -51,7 +52,6 @@ PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlid
 		constraintsDo: [ :c | 
 			c vertical matchParent.
 			c horizontal matchParent ];
-		flag: 'TODO: Start with focus dynamically calculated with slide in first postion of array in `slidePriorities` method.';
 		addChild: (self generateSlide: aSelector fromSlideshow: aSlideshow);
 		addChild: (self slideCoderElement: self >> aSelector);
 		when: BlSlideDefinitionChanged
@@ -114,7 +114,9 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 							c horizontal fitContent.
 							c vertical matchParent ]).
 			pane
-				addChild: (self generateSlideAndCoder: #titleSlideFor: fromSlideshow: aSlideshow).
+				addChild: (self
+						generateSlideAndCoder: self getSlideSelectors first
+						fromSlideshow: aSlideshow).
 			pane ]
 ]
 
@@ -124,8 +126,6 @@ PrioritySlideshow class >> gtReorderSlidesFor: aView [
 	| lastStatement |
 	lastStatement := (self allMethods
 			detect: [ :each | each selector = #slidePriorities ]) ast statements last.
-	self
-		flag: 'TODO: Better logic for when to hide vs show? Don''t show if no slides are in method or hard to parse.'.
 	(lastStatement isReturn
 		and: [ ({RBLiteralArrayNode.
 				RBArrayNode} includes: lastStatement children first class)
