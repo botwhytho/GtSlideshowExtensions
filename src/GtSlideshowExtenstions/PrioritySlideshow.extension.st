@@ -33,9 +33,12 @@ PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowIns
 		slideViewModel: (GtPresenterSlideViewModel new slide: slide);
 		when: BlClickEvent
 			do: [ :anEvent | 
+				| pane |
 				anEvent consumed: true.
-				self flag: 'TODO: load slide and method on click.'.
-				self inform: element id identifier ].
+				pane := element parent parent parent parent.
+				pane
+					replaceChild: (pane childAt: 2)
+					with: (self generateSlideAndCoder: element id identifier fromSlideshow: aSlideshow) ].
 	^ element
 ]
 
