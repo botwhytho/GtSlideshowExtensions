@@ -14,10 +14,7 @@ GtCoderExpandableSlideshowStyler >> calculateTemplates: aStringLiteralNode [
 
 { #category : #visiting }
 GtCoderExpandableSlideshowStyler >> createSlideFromTemplates: aStringLiteralNode [
-	self
-		flag: 'TODO: change logic for intersection of gtSlide & gtExample pragmas or use code that ONLY searches that class. Getting methods from other classes with substring match on class while testing.'.
-	^ ((#DemoSlideshow gtClassMatches & #gtSlide gtPragmas) contents
-		sorted: [ :a :b | a selector < b selector ])
+	^ GtCreateSlideFixItAction defaultSlideTemplates
 		collect: [ :each | 
 			(GtCreateSlideFixItAction
 				inClass: self coderViewModel behavior

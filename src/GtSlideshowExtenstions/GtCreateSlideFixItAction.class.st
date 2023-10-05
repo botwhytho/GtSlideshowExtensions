@@ -9,6 +9,12 @@ Class {
 	#category : #'GtSlideshowExtenstions-Slideshows'
 }
 
+{ #category : #visiting }
+GtCreateSlideFixItAction class >> defaultSlideTemplates [
+	^ ((DemoSlideshow methods select: [ :each | each hasPragmaNamed: #gtSlide ])
+		asSet , (#gtSlide gtPragmas & #gtExample gtPragmas) contents) asArray
+]
+
 { #category : #accessing }
 GtCreateSlideFixItAction class >> inClass: aClass withName: aSelector withTemplate: aTemplate [
 	^ self new
@@ -45,8 +51,9 @@ GtCreateSlideFixItAction >> description [
 { #category : #executing }
 GtCreateSlideFixItAction >> executeOn: anEditorElement [
 	self compileMethod.
-	self clearFixItAttributeInEditor: anEditorElement editor.
-	anEditorElement dataSource model requestSave
+	(anEditorElement respondsTo: #editor)
+		ifTrue: [ self clearFixItAttributeInEditor: anEditorElement editor.
+			anEditorElement dataSource model requestSave ]
 ]
 
 { #category : #accessing }
