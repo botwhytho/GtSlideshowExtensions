@@ -5,21 +5,21 @@ Class {
 }
 
 { #category : #visiting }
-GtCoderExpandableSlideshowStyler >> calculateTemplates: aStringLiteralNode [
+GtCoderExpandableSlideshowStyler >> calculateTemplates: aSymbolLiteralNode [
 	^ MessageSend
 		receiver: self
 		selector: #createSlideFromTemplates:
-		arguments: {aStringLiteralNode}
+		arguments: {aSymbolLiteralNode}
 ]
 
 { #category : #visiting }
-GtCoderExpandableSlideshowStyler >> createSlideFromTemplates: aStringLiteralNode [
+GtCoderExpandableSlideshowStyler >> createSlideFromTemplates: aSymbolLiteralNode [
 	^ GtCreateSlideFixItAction defaultSlideTemplates
 		collect: [ :each | 
 			(GtCreateSlideFixItAction
 				inClass: self coderViewModel behavior
-				withName: aStringLiteralNode value value asSymbol
-				withTemplate: each) node: aStringLiteralNode ]
+				withName: aSymbolLiteralNode value value asSymbol
+				withTemplate: each) node: aSymbolLiteralNode ]
 ]
 
 { #category : #private }
@@ -33,13 +33,15 @@ GtCoderExpandableSlideshowStyler >> isNonEmptyLiteralStringNode: nameNode [
 GtCoderExpandableSlideshowStyler >> styleSlideMethods: aSymbolLiteralNode [
 	| anExpanderAttribute |
 	self
+		flag: 'TODO: there seems to be an issue with autocompletion overwriting over 1 more character, only an issue when there is on extra space between the last element in the `slidePriorities` array and the closing parenthesis.'.
+	self
 		attribute: (GtCompletionStrategyAttribute new
 				strategy: (GtSlideshowCompletionStrategy withSlideshowClass: self coderViewModel behavior))
 		from: aSymbolLiteralNode value startPosition
 		to: aSymbolLiteralNode value stopPosition.
 
 	self coderViewModel behavior methods
-		detect: [ :each | each selector = aSymbolLiteralNode value ]
+		detect: [ :each | each selector = aSymbolLiteralNode asSymbol ]
 		ifFound: [ :found | 
 			anExpanderAttribute := BrGlamorousTriangleExpanderTextAttribute new
 					id: GtSourceCoderEmbeddedExpanderToggleId;
@@ -64,8 +66,6 @@ GtCoderExpandableSlideshowStyler >> styleSlideMethods: aSymbolLiteralNode [
 					placeholderAlignment: #alignMiddle;
 					fixItActions: (self calculateTemplates: aSymbolLiteralNode);
 					yourself ].
-
-
 	self
 		attribute: anExpanderAttribute
 		from: aSymbolLiteralNode value stopPosition
@@ -73,10 +73,10 @@ GtCoderExpandableSlideshowStyler >> styleSlideMethods: aSymbolLiteralNode [
 ]
 
 { #category : #visiting }
-GtCoderExpandableSlideshowStyler >> visitSymbolLiteral: aStringLiteralNode [
-	super visitSymbolLiteral: aStringLiteralNode.
+GtCoderExpandableSlideshowStyler >> visitSymbolLiteral: aSymbolLiteralNode [
+	super visitSymbolLiteral: aSymbolLiteralNode.
 
 	self coderViewModel selector = #slidePriorities ifFalse: [ ^ self ].
-	(self isNonEmptyLiteralStringNode: aStringLiteralNode) ifFalse: [ ^ self ].
-	self styleSlideMethods: aStringLiteralNode
+	(self isNonEmptyLiteralStringNode: aSymbolLiteralNode) ifFalse: [ ^ self ].
+	self styleSlideMethods: aSymbolLiteralNode
 ]
