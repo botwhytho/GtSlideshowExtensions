@@ -59,19 +59,21 @@ PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlid
 		addChild: (self slideCoderElement: self >> aSelector);
 		when: BlSlideDefinitionChanged
 			do: [ :anEvent | 
-				| aPreviewElement |
+				| previewElements |
 				anEvent consumed: true.
-				aPreviewElement := element parent children first children first children
-						detect: [ :each | each children second id identifier = aSelector ].
+				previewElements := element parent children first children first children
+						select: [ :each | each children second id identifier = aSelector ].
 				element
 					replaceChild: (element childAt: 1)
 					with: (self generateSlide: aSelector fromSlideshow: aSlideshow).
-				aPreviewElement parent
-					replaceChild: (aPreviewElement parent
-							childAt: (aPreviewElement parent children indexOf: aPreviewElement))
-					with: (self
-							slidePreviewAndControlsElement: self >> aSelector
-							withSlideshow: aSlideshow) ].
+				previewElements
+					do: [ :aPreviewElement | 
+						aPreviewElement parent
+							replaceChild: (aPreviewElement parent
+									childAt: (aPreviewElement parent children indexOf: aPreviewElement))
+							with: (self
+									slidePreviewAndControlsElement: self >> aSelector
+									withSlideshow: aSlideshow) ] ].
 	^ element
 ]
 
