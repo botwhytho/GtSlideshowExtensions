@@ -161,10 +161,12 @@ PrioritySlideshow class >> gtReorderSlidesFor: aView [
 
 { #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> gtSpotterActDefaultFrom: aSpotterElement [
-	^ (GtPager
-		openWrappedOn: self slideCompositeTool asElement
-		title: self printString
-		from: aSpotterElement) maximized
+	^ self = PrioritySlideshow
+		ifTrue: [ super gtSpotterActDefaultFrom: aSpotterElement ]
+		ifFalse: [ (GtPager
+				openWrappedOn: self slideCompositeTool asElement
+				title: self printString
+				from: aSpotterElement) maximized ]
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
