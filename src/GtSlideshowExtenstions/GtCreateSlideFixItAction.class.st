@@ -33,7 +33,9 @@ GtCreateSlideFixItAction >> attributePosition [
 GtCreateSlideFixItAction >> compileMethod [
 	| methodWithNewName refactoring |
 	methodWithNewName := slideTemplate ast
-			selector: slideName asString;
+			selector: (slideName isKeyword
+					ifTrue: [ slideName asString ]
+					ifFalse: [ slideName asString , ':' ]);
 			formattedCode.
 	refactoring := RBAddMethodRefactoring
 			addMethod: methodWithNewName
@@ -44,15 +46,19 @@ GtCreateSlideFixItAction >> compileMethod [
 
 { #category : #accessing }
 GtCreateSlideFixItAction >> description [
-	^ 'Create slide ' , slideName asString , ' from template '
-		, slideTemplate printString
+	| hasTextDescription |
+	hasTextDescription := (slideTemplate ast pragmaNamed: #text: ifAbsent: [ nil ])
+			ifNil: [ ' No Description ' ]
+			ifNotNil: [ :aPragmaNode | aPragmaNode arguments first value , ' ' ].
+	^ hasTextDescription , '(' , slideTemplate printString, ')'
 ]
 
 { #category : #executing }
 GtCreateSlideFixItAction >> executeOn: anEditorElement [
 	self compileMethod.
 	(anEditorElement respondsTo: #editor)
-		ifTrue: [ self clearFixItAttributeInEditor: anEditorElement editor.
+		ifTrue: [ slideName isKeyword ifFalse: [ self haltOnce ].
+			self clearFixItAttributeInEditor: anEditorElement editor.
 			anEditorElement dataSource model requestSave ]
 ]
 
