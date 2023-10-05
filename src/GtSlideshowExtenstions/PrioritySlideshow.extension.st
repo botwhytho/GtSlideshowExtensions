@@ -62,12 +62,13 @@ PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlid
 				| aPreviewElement |
 				anEvent consumed: true.
 				aPreviewElement := element parent children first children first children
-						detect: [ :each | each id identifier = aSelector ].
+						detect: [ :each | each children second id identifier = aSelector ].
 				element
 					replaceChild: (element childAt: 1)
 					with: (self generateSlide: aSelector fromSlideshow: aSlideshow).
 				aPreviewElement parent
-					replaceChild: (aPreviewElement parent children indexOf: aPreviewElement)
+					replaceChild: (aPreviewElement parent
+							childAt: (aPreviewElement parent children indexOf: aPreviewElement))
 					with: (self
 							generatePreviewElement: self >> aSelector
 							withSlideshowInstance: aSlideshow) ].
