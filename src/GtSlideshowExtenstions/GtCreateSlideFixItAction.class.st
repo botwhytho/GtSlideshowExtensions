@@ -73,6 +73,11 @@ GtCreateSlideFixItAction >> id [
 ]
 
 { #category : #accessing }
+GtCreateSlideFixItAction >> slideName [
+	^ slideName
+]
+
+{ #category : #accessing }
 GtCreateSlideFixItAction >> slideName: aSelector [
 slideName := aSelector
 ]
