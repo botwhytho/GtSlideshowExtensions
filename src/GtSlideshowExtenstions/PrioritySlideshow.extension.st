@@ -5,11 +5,17 @@ PrioritySlideshow class >> compileStarterMethods [
 	self methods
 		detect: [ :aMethod | aMethod selector = #slidePriorities ]
 		ifNone: [ | emptyMethod |
+			(RBAddMethodRefactoring
+				addMethod: (DemoSlideshow >> #titleSlideFor:) ast formattedCode
+				toClass: self
+				inProtocols: {#slides}) execute.
 			emptyMethod := (PrioritySlideshow >> #slidePriorities) ast.
-			self compile: (DemoSlideshow >> #titleSlideFor:) ast formattedCode.
 			emptyMethod statements last children first
 				contents: {RBLiteralValueNode value: #titleSlideFor:}.
-			self compile: emptyMethod formattedCode ]
+			(RBAddMethodRefactoring
+				addMethod: emptyMethod formattedCode
+				toClass: self
+				inProtocols: {#slides}) execute ]
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -87,7 +93,8 @@ PrioritySlideshow class >> getSlideSelectors [
 PrioritySlideshow class >> gtCreateSlidesFor: aView [
 	<gtClassView>
 	self = PrioritySlideshow ifTrue: [ ^ aView empty ].
-	self compileStarterMethods.
+	(MessageSend receiver: self selector: #compileStarterMethods) asAsyncFuture
+		await.
 	^ aView explicit
 		title: 'Create Slides';
 		tooltip: 'Create, modify & reorder slides.';
