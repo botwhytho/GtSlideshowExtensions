@@ -5,17 +5,13 @@ PrioritySlideshow class >> compileStarterMethods [
 	self methods
 		detect: [ :aMethod | aMethod selector = #slidePriorities ]
 		ifNone: [ | emptyMethod |
-			(RBAddMethodRefactoring
-				addMethod: (DemoSlideshow >> #titleSlideFor:) ast formattedCode
-				toClass: self
-				inProtocols: {#slides}) execute.
-			emptyMethod := (PrioritySlideshow >> #slidePriorities) ast.
+			self >> (self compile: (DemoSlideshow >> #titleSlideFor:) ast formattedCode)
+				protocol: 'slides'.
+			emptyMethod := (PrioritySlideshow >> #slidePriorities) ast
+					copyInContext: Dictionary new.
 			emptyMethod statements last children first
 				contents: {RBLiteralValueNode value: #titleSlideFor:}.
-			(RBAddMethodRefactoring
-				addMethod: emptyMethod formattedCode
-				toClass: self
-				inProtocols: {#slides}) execute ]
+			self >> (self compile: emptyMethod formattedCode) protocol: 'slides' ]
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
