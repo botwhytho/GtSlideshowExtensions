@@ -252,9 +252,7 @@ PrioritySlideshow class >> gtSpotterActDefaultFrom: aSpotterElement [
 
 { #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow >> priorityFor: aSlideMethodSelector [
-	^ self slidePriorities
-		indexOf: aSlideMethodSelector
-		ifAbsent: [ self inform: 'Missing slide priority for ' , aSlideMethodSelector printString. 0 ]
+	^ self slidePriorities indexOf: aSlideMethodSelector ifAbsent: [ 0 ]
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
