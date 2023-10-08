@@ -369,7 +369,9 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIconAndElement [
 				itemDataBinder: [ :eachElement :aFixItAction :anIndex | 
 					eachElement
 						when: BlClickEvent
-						do: [ selectorName text: (BlRunRopedText string: aFixItAction slideName).
+						do: [ :anEvent | 
+							anEvent consumed: true.
+							selectorName text: (BlRunRopedText string: aFixItAction slideName).
 							pane userData at: #selectedTemplate put: anIndex ].
 					eachElement text: aFixItAction description ];
 				items: actions.
@@ -382,14 +384,18 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIconAndElement [
 				label: 'Create Slide';
 				margin: (BlInsets all: 2);
 				action: [ :aButton | 
-					| aFixItAction |
+					| aFixItAction aSelector |
+					aSelector := selectorName text asString asSymbol asKeywordMessage.
 					aFixItAction := actions at: (pane userData at: #selectedTemplate).
-					aFixItAction
-						slideName: selectorName text asString asSymbol asKeywordMessage.
-					aFixItAction executeOn: miscElement.
+					aFixItAction slideName: aSelector.
+					self methods
+						detect: [ :aMethod | aMethod selector = aSelector ]
+						ifFound: [ self
+								inform: aSelector asString , ' already exists. Added a duplicate of that slide.' ]
+						ifNone: [ aFixItAction executeOn: miscElement ].
 					anIconAndElement second
 						fireEvent: (BlChildOrderingPotentiallyChangedEvent new
-								selector: selectorName text asString asSymbol asKeywordMessage;
+								selector: aSelector;
 								order: anIconAndElement third).
 					aButton fireEvent: BrDropdownHideWish new ].
 		cancelButton := BrButton new
