@@ -56,15 +56,19 @@ PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowIns
 		aptitude: BrShadowAptitude new;
 		margin: (BlInsets all: 6);
 		background: Color white;
-		slideViewModel: (GtPresenterSlideViewModel new slide: slide);
-		when: BlClickEvent
-			do: [ :anEvent | 
-				| pane |
-				anEvent consumed: true.
-				pane := element parent parent parent parent.
-				pane
-					replaceChild: (pane childAt: 2)
-					with: (self generateSlideAndCoder: element id identifier fromSlideshow: aSlideshow) ].
+		slideViewModel: (GtPresenterSlideViewModel new slide: slide).
+	self
+		flag: 'TODO: Below logic is because handling the click event is only relevant in one of the views, while this code is being shared by two views. Fix?'.
+	thisContext sender method selector = #gtReorderSlidesFor:
+		ifFalse: [ element
+				when: BlClickEvent
+				do: [ :anEvent | 
+					| pane |
+					anEvent consumed: true.
+					pane := element parent parent parent parent.
+					pane
+						replaceChild: (pane childAt: 2)
+						with: (self generateSlideAndCoder: element id identifier fromSlideshow: aSlideshow) ] ].
 	^ element
 ]
 
