@@ -6,7 +6,7 @@ Class {
 		'slideTemplate',
 		'slideName'
 	],
-	#category : #'GtSlideshowExtenstions-Slideshows'
+	#category : #'GtSlideshowExtensions-Slideshows'
 }
 
 { #category : #visiting }

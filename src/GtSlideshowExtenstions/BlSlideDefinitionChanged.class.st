@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'viewModel'
 	],
-	#category : #'GtSlideshowExtenstions-Slideshows'
+	#category : #'GtSlideshowExtensions-Slideshows'
 }
 
 { #category : #accessing }

@@ -1,16 +1,16 @@
 Class {
-	#name : #BaselineOfGtSlideshowExtenstions,
+	#name : #BaselineOfGtSlideshowExtensions,
 	#superclass : #BaselineOf,
-	#category : #BaselineOfGtSlideshowExtenstions
+	#category : #BaselineOfGtSlideshowExtensions
 }
 
 { #category : #baseline }
-BaselineOfGtSlideshowExtenstions >> baseline: spec [
+BaselineOfGtSlideshowExtensions >> baseline: spec [
 	<baseline>
 	^ spec
 		for: #common
 		do: [ spec
 				baseline: 'DrawingTool'
 				with: [ spec repository: 'github://botwhytho/GToolkitExperiments:master/src' ].
-			spec package: 'GtSlideshowExtenstions' ]
+			spec package: 'GtSlideshowExtensions' ]
 ]

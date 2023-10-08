@@ -1,6 +1,6 @@
 Extension { #name : #GtPharoMethodCoder }
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 GtPharoMethodCoder >> slideshowAddOnFor: anAST into: coderAddOns [
 	<gtAstCoderAddOns: 10>
 	(self behavior inheritsFrom: PrioritySlideshow) ifFalse: [ ^ self ].

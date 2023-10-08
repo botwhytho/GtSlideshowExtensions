@@ -6,7 +6,7 @@ Class {
 		'selector',
 		'order'
 	],
-	#category : #'GtSlideshowExtenstions-Drag & Drop'
+	#category : #'GtSlideshowExtensions-Drag & Drop'
 }
 
 { #category : #accessing }

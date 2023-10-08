@@ -1,7 +1,7 @@
 Class {
 	#name : #GtCoderExpandableSlideshowStyler,
 	#superclass : #GtGenericPharoStyler,
-	#category : #'GtSlideshowExtenstions-Slideshows'
+	#category : #'GtSlideshowExtensions-Slideshows'
 }
 
 { #category : #visiting }

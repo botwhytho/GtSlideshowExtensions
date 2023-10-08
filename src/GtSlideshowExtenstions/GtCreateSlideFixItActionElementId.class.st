@@ -1,7 +1,7 @@
 Class {
 	#name : #GtCreateSlideFixItActionElementId,
 	#superclass : #GtFixItActionElementId,
-	#category : #'GtSlideshowExtenstions-Slideshows'
+	#category : #'GtSlideshowExtensions-Slideshows'
 }
 
 { #category : #converting }

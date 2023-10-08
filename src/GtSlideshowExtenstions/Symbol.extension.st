@@ -1,6 +1,6 @@
 Extension { #name : #Symbol }
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 Symbol >> asKeywordMessage [
 	^ self isKeyword ifTrue: [ self ] ifFalse: [ self , ':' ]
 ]

@@ -1,6 +1,6 @@
 Extension { #name : #PrioritySlideshow }
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> addSlide: aSlideshow inDirection: aDirection [
 	| aButton anIcon |
 	anIcon := [ | aVectorIcon |
@@ -20,7 +20,7 @@ PrioritySlideshow class >> addSlide: aSlideshow inDirection: aDirection [
 		label: 'Add slide ' , aDirection
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> compileStarterMethods [
 	self methods
 		detect: [ :aMethod | aMethod selector = #slidePriorities ]
@@ -34,7 +34,7 @@ PrioritySlideshow class >> compileStarterMethods [
 			self >> (self compile: emptyMethod formattedCode) protocol: 'slides' ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> defaultFixItActions [
 	^ GtCreateSlideFixItAction defaultSlideTemplates
 		collect: [ :each | 
@@ -44,7 +44,7 @@ PrioritySlideshow class >> defaultFixItActions [
 				withTemplate: each) node: (RBLiteralNode value: each selector) ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowInstance: aSlideshow [
 	| element slide |
 	slide := GtPresenterSlide new
@@ -72,12 +72,12 @@ PrioritySlideshow class >> generatePreviewElement: aSlideMethod withSlideshowIns
 	^ element
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> generateSlide: aSelector fromSlideshow: aSlideshow [
 	^ (aSlideshow perform: aSelector with: GtLiveSlide new) asElement
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlideshow [
 	| element |
 	element := BrVerticalPane new.
@@ -109,13 +109,13 @@ PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlid
 	^ element
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> getSlideSelectors [
 	^ (self >> #slidePriorities) ast statements last children first contents
 		collect: #value
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> gtCreateSlidesFor: aView [
 	<gtClassView>
 	self = PrioritySlideshow ifTrue: [ ^ aView empty ].
@@ -169,7 +169,7 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 			pane ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> gtReorderSlidesFor: aView [
 	<gtClassView>
 	| lastStatement |
@@ -208,7 +208,7 @@ PrioritySlideshow class >> gtReorderSlidesFor: aView [
 			container asScrollableElement ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> gtSpotterActDefaultFrom: aSpotterElement [
 	^ self = PrioritySlideshow
 		ifTrue: [ super gtSpotterActDefaultFrom: aSpotterElement ]
@@ -218,12 +218,12 @@ PrioritySlideshow class >> gtSpotterActDefaultFrom: aSpotterElement [
 				from: aSpotterElement) maximized ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow >> priorityFor: aSlideMethodSelector [
 	^ self slidePriorities indexOf: aSlideMethodSelector ifAbsent: [ 0 ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> recompileMethod: guiOrder [
 	| method |
 	method := self >> #slidePriorities.
@@ -232,7 +232,7 @@ PrioritySlideshow class >> recompileMethod: guiOrder [
 	self compile: method ast formattedCode
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> recompileMethodIfOrderChanged: aBlElementCollection [
 	| currentOrder guiOrder |
 	currentOrder := self getSlideSelectors.
@@ -241,7 +241,7 @@ PrioritySlideshow class >> recompileMethodIfOrderChanged: aBlElementCollection [
 		ifFalse: [ self recompileMethod: guiOrder ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> slideCoderElement: aMethod [
 	| aModel aViewModel anElement |
 	aModel := GtPharoMethodCoder forMethod: aMethod.
@@ -263,7 +263,7 @@ PrioritySlideshow class >> slideCoderElement: aMethod [
 	^ anElement
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> slideCompositeTool [
 	^ GtPhlowCompositeTool new
 		addTool: (GtPhlowValuableTool new
@@ -276,7 +276,7 @@ PrioritySlideshow class >> slideCompositeTool [
 		yourself
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> slideControlElements: aSlideshow [
 	| pane |
 	pane := BrVerticalPane new.
@@ -299,7 +299,7 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 							pane parent} ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> slidePreviewAndControlsElement: aSlideMethod withSlideshow: aSlideshow [
 	| anElement aLabel |
 	anElement := BrHorizontalPane new.
@@ -320,7 +320,7 @@ PrioritySlideshow class >> slidePreviewAndControlsElement: aSlideMethod withSlid
 		addEventHandler: GTSlideReorderingHandler new
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> slideTemplateDropdownAptitude: anIconAndElement [
 	| aValuable |
 	aValuable := [ | actions addSlide cancelButton controls miscElement pane selectorName selectorMenu simpleList |

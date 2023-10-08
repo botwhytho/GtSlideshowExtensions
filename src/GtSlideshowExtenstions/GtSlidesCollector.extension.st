@@ -1,6 +1,6 @@
 Extension { #name : #GtSlidesCollector }
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 GtSlidesCollector >> collect [
 	<return: #Array of: #GtLiveSlide>
 	<gtCollector>
@@ -9,7 +9,7 @@ GtSlidesCollector >> collect [
 		ifFalse: [ self defaultCollect ]
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 GtSlidesCollector >> defaultCollect [
 	<return: #Array of: #GtLiveSlide>
 	| theViews |
@@ -31,7 +31,7 @@ GtSlidesCollector >> defaultCollect [
 	^ theViews
 ]
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 GtSlidesCollector >> prioritySlideshowCollect [
 	<return: #Array of: #GtLiveSlide>
 	^ self object slidePriorities

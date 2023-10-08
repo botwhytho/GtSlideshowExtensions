@@ -1,1 +1,1 @@
-Package { #name : #GtSlideshowExtenstions }
+Package { #name : #GtSlideshowExtensions }

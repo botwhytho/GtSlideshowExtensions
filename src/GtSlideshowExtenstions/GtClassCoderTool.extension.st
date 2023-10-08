@@ -1,6 +1,6 @@
 Extension { #name : #GtClassCoderTool }
 
-{ #category : #'*GtSlideshowExtenstions' }
+{ #category : #'*GtSlideshowExtensions' }
 GtClassCoderTool class >> observedClass: aClass [
 	^ (aClass inheritsFrom: PrioritySlideshow)
 		ifTrue: [ aClass slideCompositeTool ]

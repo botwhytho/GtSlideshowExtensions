@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'slideshowClass'
 	],
-	#category : #'GtSlideshowExtenstions-Slideshows'
+	#category : #'GtSlideshowExtensions-Slideshows'
 }
 
 { #category : #initialization }

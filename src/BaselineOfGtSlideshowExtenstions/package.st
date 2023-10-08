@@ -1,1 +1,1 @@
-Package { #name : #BaselineOfGtSlideshowExtenstions }
+Package { #name : #BaselineOfGtSlideshowExtensions }

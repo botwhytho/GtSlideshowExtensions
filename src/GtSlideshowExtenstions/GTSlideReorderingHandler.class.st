@@ -1,7 +1,7 @@
 Class {
 	#name : #GTSlideReorderingHandler,
 	#superclass : #DTReorderingHandler,
-	#category : #'GtSlideshowExtenstions-Drag & Drop'
+	#category : #'GtSlideshowExtensions-Drag & Drop'
 }
 
 { #category : #'event handling' }
