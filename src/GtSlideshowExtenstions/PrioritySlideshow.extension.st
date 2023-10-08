@@ -1,6 +1,26 @@
 Extension { #name : #PrioritySlideshow }
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow class >> addSlide: aSlideshow inDirection: aDirection [
+	| aButton anIcon |
+	anIcon := [ | aVectorIcon |
+		aVectorIcon := (BrGlamorousVectorIcons
+				perform: (aDirection = 'before' ifTrue: [ #upwards ] ifFalse: [ #downwards ]))
+				asElement.
+		aVectorIcon background: Color lightGray ].
+	aButton := BrButton new id: #add , aDirection capitalized.
+	^ aButton
+		beSmallSize;
+		aptitude: BrGlamorousButtonWithIconAptitude
+				+ (self
+						slideTemplateDropdownAptitude: {anIcon value.
+								aButton.
+								aDirection});
+		icon: anIcon value;
+		label: 'Add slide ' , aDirection
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> addSlideAbove: aSlideshow [
 	| aButton anIcon |
 	anIcon := [ BrGlamorousVectorIcons upwards asElement
@@ -299,17 +319,18 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 			c horizontal fitContent.
 			c vertical fitContent ];
 		alignCenter;
-		addChildren: {self addSlideAbove: aSlideshow.
+		addChildren: {self addSlide: aSlideshow inDirection: 'before'.
 				BrGlamorousVectorIcons add asElement background: Color lightGray.
-				self addSlideBelow: aSlideshow};
+				self addSlide: aSlideshow inDirection: 'after'};
 		when: BlChildOrderingPotentiallyChangedEvent
 			do: [ :anEvent | 
 				anEvent consumed: false.
 				pane parent parent
-					addChild: (self
-							slidePreviewAndControlsElement: self >> anEvent selector
-							withSlideshow: aSlideshow)
-					before: pane parent ]
+					perform: #addChild: , anEvent order asSymbol asKeywordMessage
+					withArguments: {self
+								slidePreviewAndControlsElement: self >> anEvent selector
+								withSlideshow: aSlideshow.
+							pane parent} ]
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -365,11 +386,13 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIconAndElement [
 				action: [ :aButton | 
 					| aFixItAction |
 					aFixItAction := actions at: (pane userData at: #selectedTemplate).
-					aFixItAction slideName: selectorName text asString asSymbol asKeywordMessage.
+					aFixItAction
+						slideName: selectorName text asString asSymbol asKeywordMessage.
 					aFixItAction executeOn: miscElement.
 					anIconAndElement second
 						fireEvent: (BlChildOrderingPotentiallyChangedEvent new
-								selector: selectorName text asString asSymbol asKeywordMessage).
+								selector: selectorName text asString asSymbol asKeywordMessage;
+								order: anIconAndElement third).
 					aButton fireEvent: BrDropdownHideWish new ].
 		cancelButton := BrButton new
 				aptitude: BrGlamorousButtonWithIconAptitude new;
@@ -393,6 +416,6 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIconAndElement [
 				beSmallSize;
 				aptitude: BrGlamorousButtonWithIconAptitude;
 				icon: anIconAndElement first;
-				label: 'Add slide above' ]
+				label: 'Add slide ' , anIconAndElement third ]
 		content: [ aValuable value ]
 ]

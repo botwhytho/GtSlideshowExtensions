@@ -3,7 +3,8 @@ Class {
 	#superclass : #BlEvent,
 	#instVars : [
 		'parent',
-		'selector'
+		'selector',
+		'order'
 	],
 	#category : #'GtSlideshowExtenstions-Drag & Drop'
 }
@@ -11,6 +12,16 @@ Class {
 { #category : #accessing }
 BlChildOrderingPotentiallyChangedEvent class >> parent: aParentElement [
 	^ self new parent: aParentElement ; yourself
+]
+
+{ #category : #accessing }
+BlChildOrderingPotentiallyChangedEvent >> order [
+	^ order
+]
+
+{ #category : #accessing }
+BlChildOrderingPotentiallyChangedEvent >> order: anObject [
+	order := anObject
 ]
 
 { #category : #accessing }
