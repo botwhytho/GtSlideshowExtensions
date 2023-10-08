@@ -33,9 +33,7 @@ GtCreateSlideFixItAction >> attributePosition [
 GtCreateSlideFixItAction >> compileMethod [
 	| methodWithNewName refactoring |
 	methodWithNewName := slideTemplate ast
-			selector: (slideName isKeyword
-					ifTrue: [ slideName asString ]
-					ifFalse: [ slideName asString , ':' ]);
+			selector: slideName asKeywordMessage asString;
 			formattedCode.
 	refactoring := RBAddMethodRefactoring
 			addMethod: methodWithNewName

@@ -365,11 +365,11 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIconAndElement [
 				action: [ :aButton | 
 					| aFixItAction |
 					aFixItAction := actions at: (pane userData at: #selectedTemplate).
-					aFixItAction slideName: selectorName text asString asSymbol.
+					aFixItAction slideName: selectorName text asString asSymbol asKeywordMessage.
 					aFixItAction executeOn: miscElement.
 					anIconAndElement second
 						fireEvent: (BlChildOrderingPotentiallyChangedEvent new
-								selector: selectorName text asString asSymbol).
+								selector: selectorName text asString asSymbol asKeywordMessage).
 					aButton fireEvent: BrDropdownHideWish new ].
 		cancelButton := BrButton new
 				aptitude: BrGlamorousButtonWithIconAptitude new;
