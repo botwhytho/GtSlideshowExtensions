@@ -9,7 +9,9 @@ PrioritySlideshow class >> addSlideAbove: aSlideshow [
 	^ aButton
 		beSmallSize;
 		aptitude: BrGlamorousButtonWithIconAptitude
-				+ (self slideTemplateDropdownAptitude: anIcon value);
+				+ (self
+						slideTemplateDropdownAptitude: {anIcon value.
+								aButton});
 		icon: anIcon value;
 		label: 'Add slide above'
 ]
@@ -229,6 +231,13 @@ PrioritySlideshow class >> gtSpotterActDefaultFrom: aSpotterElement [
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
+PrioritySlideshow >> priorityFor: aSlideMethodSelector [
+	^ self slidePriorities
+		indexOf: aSlideMethodSelector
+		ifAbsent: [ self inform: 'Missing slide priority for ' , aSlideMethodSelector printString. 0 ]
+]
+
+{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> recompileMethod: guiOrder [
 	| method |
 	method := self >> #slidePriorities.
@@ -295,6 +304,7 @@ PrioritySlideshow class >> slideControlElements: aSlideshow [
 				self addSlideBelow: aSlideshow};
 		when: BlChildOrderingPotentiallyChangedEvent
 			do: [ :anEvent | 
+				anEvent consumed: false.
 				pane parent parent
 					addChild: (self
 							slidePreviewAndControlsElement: self >> anEvent selector
@@ -324,7 +334,7 @@ PrioritySlideshow class >> slidePreviewAndControlsElement: aSlideMethod withSlid
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
-PrioritySlideshow class >> slideTemplateDropdownAptitude: anIcon [
+PrioritySlideshow class >> slideTemplateDropdownAptitude: anIconAndElement [
 	| aValuable |
 	aValuable := [ | actions addSlide cancelButton controls miscElement pane selectorName selectorMenu simpleList |
 		actions := self defaultFixItActions.
@@ -357,7 +367,7 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIcon [
 					aFixItAction := actions at: (pane userData at: #selectedTemplate).
 					aFixItAction slideName: selectorName text asString asSymbol.
 					aFixItAction executeOn: miscElement.
-					aButton
+					anIconAndElement second
 						fireEvent: (BlChildOrderingPotentiallyChangedEvent new
 								selector: selectorName text asString asSymbol).
 					aButton fireEvent: BrDropdownHideWish new ].
@@ -382,7 +392,7 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIcon [
 		handle: [ BrButton new
 				beSmallSize;
 				aptitude: BrGlamorousButtonWithIconAptitude;
-				icon: anIcon;
+				icon: anIconAndElement first;
 				label: 'Add slide above' ]
 		content: [ aValuable value ]
 ]
