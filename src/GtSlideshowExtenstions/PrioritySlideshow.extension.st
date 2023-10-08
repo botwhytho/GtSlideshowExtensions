@@ -86,6 +86,8 @@ PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlid
 		when: BlSlideDefinitionChanged
 			do: [ :anEvent | 
 				| previewElements |
+				self
+					flag: 'TODO: Below fails when we have duplicated slides saying "#children was sent to nil" when that message is sent to `element parent`'.
 				anEvent consumed: true.
 				previewElements := element parent children first children first children
 						select: [ :each | each children second id identifier = aSelector ].
