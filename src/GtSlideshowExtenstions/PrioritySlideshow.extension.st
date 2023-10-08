@@ -11,14 +11,7 @@ PrioritySlideshow class >> addSlideAbove: aSlideshow [
 		aptitude: BrGlamorousButtonWithIconAptitude
 				+ (self slideTemplateDropdownAptitude: anIcon value);
 		icon: anIcon value;
-		label: 'Add slide above'	";
-		action: [ :aBrButton :aBrButtonModel :anEvent | 
-			aBrButton parent parent parent
-				addChild: (self
-						slidePreviewAndControlsElement: self createNewSlideFromTemplate
-						withSlideshow: aSlideshow)
-				before: aBrButton parent parent.
-			aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]"
+		label: 'Add slide above'
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -290,14 +283,23 @@ PrioritySlideshow class >> slideCompositeTool [
 
 { #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> slideControlElements: aSlideshow [
-	^ BrVerticalPane new
+	| pane |
+	pane := BrVerticalPane new.
+	^ pane
 		constraintsDo: [ :c | 
 			c horizontal fitContent.
 			c vertical fitContent ];
 		alignCenter;
 		addChildren: {self addSlideAbove: aSlideshow.
 				BrGlamorousVectorIcons add asElement background: Color lightGray.
-				self addSlideBelow: aSlideshow}
+				self addSlideBelow: aSlideshow};
+		when: BlChildOrderingPotentiallyChangedEvent
+			do: [ :anEvent | 
+				pane parent parent
+					addChild: (self
+							slidePreviewAndControlsElement: self >> anEvent selector
+							withSlideshow: aSlideshow)
+					before: pane parent ]
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
@@ -349,10 +351,16 @@ PrioritySlideshow class >> slideTemplateDropdownAptitude: anIcon [
 		addSlide := BrButton new
 				aptitude: BrGlamorousButtonWithLabelAptitude new;
 				label: 'Create Slide';
-				margin: (BlInsets all: 2)";
+				margin: (BlInsets all: 2);
 				action: [ :aButton | 
-					(actions at: (pane userData at: #selectedTemplate)) executeOn: miscElement.
-					aButton fireEvent: BrDropdownHideWish new ]".
+					| aFixItAction |
+					aFixItAction := actions at: (pane userData at: #selectedTemplate).
+					aFixItAction slideName: selectorName test asString asSymbol.
+					aFixItAction executeOn: miscElement.
+					aButton
+						fireEvent: (BlChildOrderingPotentiallyChangedEvent new
+								selector: selectorName test asString asSymbol).
+					aButton fireEvent: BrDropdownHideWish new ].
 		cancelButton := BrButton new
 				aptitude: BrGlamorousButtonWithIconAptitude new;
 				icon: BrGlamorousVectorIcons cancel;
