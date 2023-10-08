@@ -21,38 +21,6 @@ PrioritySlideshow class >> addSlide: aSlideshow inDirection: aDirection [
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
-PrioritySlideshow class >> addSlideAbove: aSlideshow [
-	| aButton anIcon |
-	anIcon := [ BrGlamorousVectorIcons upwards asElement
-			background: Color lightGray ].
-	aButton := BrButton new id: #addAbove.
-	^ aButton
-		beSmallSize;
-		aptitude: BrGlamorousButtonWithIconAptitude
-				+ (self
-						slideTemplateDropdownAptitude: {anIcon value.
-								aButton});
-		icon: anIcon value;
-		label: 'Add slide above'
-]
-
-{ #category : #'*GtSlideshowExtenstions' }
-PrioritySlideshow class >> addSlideBelow: aSlideshow [
-	^ BrButton new
-		beSmallSize;
-		aptitude: BrGlamorousButtonWithIconAptitude;
-		icon: (BrGlamorousVectorIcons downwards asElement background: Color lightGray);
-		label: 'Add slide below';
-		action: [ :aBrButton :aBrButtonModel :anEvent | 
-			aBrButton parent parent parent
-				addChild: (self
-						slidePreviewAndControlsElement: self createNewSlideFromTemplate
-						withSlideshow: aSlideshow)
-				after: aBrButton parent parent.
-			aBrButton fireEvent: BlChildOrderingPotentiallyChangedEvent new ]
-]
-
-{ #category : #'*GtSlideshowExtenstions' }
 PrioritySlideshow class >> compileStarterMethods [
 	self methods
 		detect: [ :aMethod | aMethod selector = #slidePriorities ]
@@ -64,12 +32,6 @@ PrioritySlideshow class >> compileStarterMethods [
 			emptyMethod statements last children first
 				contents: {RBLiteralValueNode value: #titleSlideFor:}.
 			self >> (self compile: emptyMethod formattedCode) protocol: 'slides' ]
-]
-
-{ #category : #'*GtSlideshowExtenstions' }
-PrioritySlideshow class >> createNewSlideFromTemplate [
-	self flag: 'TODO: Currently Static. Refactor into bringing up menu with templates, empty or clone current'.
-	^ DemoSlideshow >> #titleSlideFor:
 ]
 
 { #category : #'*GtSlideshowExtenstions' }
