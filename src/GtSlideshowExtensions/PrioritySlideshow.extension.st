@@ -117,6 +117,7 @@ PrioritySlideshow class >> getSlideSelectors [
 
 { #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> gtCreateSlidesFor: aView [
+	<gtView>
 	<gtClassView>
 	self = PrioritySlideshow ifTrue: [ ^ aView empty ].
 	self
@@ -127,19 +128,26 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 		title: 'Create Slides';
 		tooltip: 'Create, modify & reorder slides.';
 		priority: 0;
-		stencil: [ | aSlideshow pane sidebar slides |
+		stencil: [ | aBrFrame aSlideshow button pane sidebar slides |
 			aSlideshow := self new.
+			aBrFrame := BrFrame new
+					constraintsDo: [ :c | 
+						c vertical matchParent.
+						c horizontal matchParent ].
+			button := BrButton new
+					zIndex: 1000;
+					aptitude: BrGlamorousButtonWithIconAptitude;
+					margin: (BlInsets top: 20 left: 10);
+					label: 'Play slideshow in new window';
+					icon: BrGlamorousVectorIcons play;
+					action: [ :aButton | GtPresenterSlideShow openInSpace: self ].
 			pane := BrHorizontalPane new
 					constraintsDo: [ :c | 
 						c vertical matchParent.
 						c horizontal matchParent ].
 			sidebar := BrVerticalPane new
 					background: Color white;
-					margin: (BlInsets
-							top: 10
-							right: 10
-							bottom: 10
-							left: 10);
+					margin: (BlInsets all: 10);
 					addAptitude: BrShadowAptitude new;
 					fitContent.
 			sidebar
@@ -166,11 +174,14 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 				addChild: (self
 						generateSlideAndCoder: self getSlideSelectors first
 						fromSlideshow: aSlideshow).
-			pane ]
+			aBrFrame
+				addChildren: {pane.
+						button} ]
 ]
 
 { #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> gtReorderSlidesFor: aView [
+	<gtView>
 	<gtClassView>
 	| lastStatement |
 	lastStatement := (self allMethods
