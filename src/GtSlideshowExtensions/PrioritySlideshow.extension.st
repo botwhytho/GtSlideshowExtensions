@@ -137,7 +137,10 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 			button := BrButton new
 					zIndex: 1000;
 					aptitude: BrGlamorousButtonWithIconAptitude;
-					margin: (BlInsets top: 20 left: 10);
+					margin: (BlInsets all: 20);
+					constraintsDo: [ :c | 
+						c frame horizontal alignRight.
+						c frame vertical alignTop ];
 					label: 'Play slideshow in new window';
 					icon: BrGlamorousVectorIcons play;
 					action: [ :aButton | GtPresenterSlideShow openInSpace: self ].
