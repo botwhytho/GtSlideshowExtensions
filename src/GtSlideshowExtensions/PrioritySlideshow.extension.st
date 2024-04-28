@@ -285,7 +285,7 @@ PrioritySlideshow class >> slideCompositeTool [
 				valuable: (MessageSend
 						receiver: self
 						selector: #gtCreateSlidesFor:
-						argument: GtPhlowProtoView new));
+						argument: GtPhlowView empty));
 		addTool: (GtClassCoderTool new observedClass: self);
 		yourself
 ]
