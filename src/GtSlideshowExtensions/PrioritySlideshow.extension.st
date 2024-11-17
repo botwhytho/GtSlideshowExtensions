@@ -282,10 +282,9 @@ PrioritySlideshow class >> slideCompositeTool [
 	^ GtPhlowCompositeTool new
 		addTool: (GtPhlowValuableTool new
 				name: 'Slide Editor';
-				valuable: (MessageSend
-						receiver: self
-						selector: #gtCreateSlidesFor:
-						argument: GtPhlowView empty));
+				valuable: [ BrFrame new
+						matchParent;
+						addChild: (self gtCreateSlidesFor: GtPhlowView empty) asElement ]);
 		addTool: (GtClassCoderTool new observedClass: self);
 		yourself
 ]
