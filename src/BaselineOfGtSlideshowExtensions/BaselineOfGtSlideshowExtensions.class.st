@@ -7,10 +7,5 @@ Class {
 { #category : #baseline }
 BaselineOfGtSlideshowExtensions >> baseline: spec [
 	<baseline>
-	^ spec
-		for: #common
-		do: [ spec
-				baseline: 'DrawingTool'
-				with: [ spec repository: 'github://botwhytho/GToolkitExperiments:master/src' ].
-			spec package: 'GtSlideshowExtensions' ]
+	^ spec for: #common do: [ spec package: 'GtSlideshowExtensions' ]
 ]
