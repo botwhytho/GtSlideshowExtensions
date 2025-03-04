@@ -79,9 +79,8 @@ PrioritySlideshow class >> generateSlide: aSelector fromSlideshow: aSlideshow [
 
 { #category : #'*GtSlideshowExtensions' }
 PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlideshow [
-	| element |
-	element := BrVerticalPane new.
-	element
+	^ BrVerticalPane new
+		id: #slideAndCoder;
 		constraintsDo: [ :c | 
 			c vertical matchParent.
 			c horizontal matchParent ];
@@ -89,24 +88,24 @@ PrioritySlideshow class >> generateSlideAndCoder: aSelector fromSlideshow: aSlid
 		addChild: (self slideCoderElement: self >> aSelector);
 		when: BlSlideDefinitionChanged
 			do: [ :anEvent | 
-				| previewElements |
-				self
-					flag: 'TODO: Below fails when we have duplicated slides saying "#children was sent to nil" when that message is sent to `element parent`'.
-				anEvent consumed: true.
-				previewElements := element parent children first children first children
-						select: [ :each | each children second id identifier = aSelector ].
+				| element |
+				element := anEvent currentTarget.
 				element
-					replaceChild: (element childAt: 1)
-					with: (self generateSlide: aSelector fromSlideshow: aSlideshow).
-				previewElements
-					do: [ :aPreviewElement | 
-						aPreviewElement parent
-							replaceChild: (aPreviewElement parent
-									childAt: (aPreviewElement parent children indexOf: aPreviewElement))
-							with: (self
-									slidePreviewAndControlsElement: self >> aSelector
-									withSlideshow: aSlideshow) ] ].
-	^ element
+					enqueueTask: [ | previewElements |
+						previewElements := (element space root childNamed: #slidePreviews)
+								children
+								select: [ :each | each children second id identifier = aSelector ].
+						element
+							replaceChild: (element childAt: 1)
+							with: (self generateSlide: aSelector fromSlideshow: aSlideshow).
+						previewElements
+							do: [ :aPreviewElement | 
+								aPreviewElement parent
+									replaceChild: (aPreviewElement parent
+											childAt: (aPreviewElement parent children indexOf: aPreviewElement))
+									with: (self
+											slidePreviewAndControlsElement: self >> aSelector
+											withSlideshow: aSlideshow) ] ] asBlTask ]
 ]
 
 { #category : #'*GtSlideshowExtensions' }
@@ -149,6 +148,7 @@ PrioritySlideshow class >> gtCreateSlidesFor: aView [
 						c vertical matchParent.
 						c horizontal matchParent ].
 			sidebar := BrVerticalPane new
+					id: #slidePreviews;
 					background: Color white;
 					margin: (BlInsets all: 10);
 					addAptitude: BrShadowAptitude new;
